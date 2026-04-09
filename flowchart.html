@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Course Flowchart</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Josefin+Sans:wght@400;600&display=swap" rel="stylesheet">
+
+<style>
+
+body{
+margin:0;
+font-family:'Josefin Sans';
+background:linear-gradient(135deg,#0b1f3a,#123a7a);
+color:white;
+}
+
+/* FIXED HEADER */
+.header-wrap{
+position:fixed;
+top:0;
+width:100%;
+background:rgba(11,31,58,0.95);
+backdrop-filter:blur(6px);
+z-index:1000;
+padding-bottom:10px;
+}
+
+.container{
+max-width:720px;
+margin:auto;
+padding:10px 20px;
+}
+
+.header{text-align:center;position:relative;}
+.logo-left{position:absolute;left:0;top:10px;width:50px;}
+.logo-right{position:absolute;right:0;top:10px;width:50px;}
+
+h1{margin:0;color:#7ecbff;}
+.sub{font-size:13px;}
+
+/* NAV */
+.nav{text-align:center;margin-top:8px;}
+.nav a{
+margin:3px;
+padding:5px 10px;
+background:#66b2ff;
+border-radius:20px;
+color:white;
+text-decoration:none;
+font-size:11px;
+transition:0.3s;
+}
+.nav a:hover{
+background:#00e676;
+color:black;
+}
+
+/* SCROLL CONTENT */
+.content{
+margin-top:140px;
+max-width:720px;
+margin-left:auto;
+margin-right:auto;
+padding:20px;
+}
+
+/* FLOW */
+.flow{
+margin-top:25px;
+padding:18px;
+background:rgba(255,255,255,0.06);
+border-radius:14px;
+backdrop-filter:blur(6px);
+box-shadow:0 0 12px rgba(0,0,0,0.3);
+}
+
+/* LINE */
+.line{
+display:flex;
+align-items:center;
+flex-wrap:wrap;
+gap:8px;
+position:relative;
+}
+
+/* NODE */
+.node{
+padding:5px 9px;
+font-size:11px;
+background:#1e88e5;
+border-radius:6px;
+cursor:pointer;
+position:relative;
+transition:0.25s;
+opacity:0;
+transform:translateY(8px);
+animation:fadeIn 0.4s forwards;
+}
+
+.node:hover{
+background:#00e676;
+color:black;
+transform:scale(1.08);
+box-shadow:0 0 10px #00e676;
+}
+
+/* ARROW */
+.arrow{
+font-size:12px;
+opacity:0.7;
+}
+
+/* FLOW GLOW */
+.line::before{
+content:'';
+position:absolute;
+top:50%;
+left:0;
+height:2px;
+width:100%;
+background:linear-gradient(90deg, transparent, #00e676, transparent);
+animation:flowGlow 3s infinite linear;
+opacity:0.3;
+}
+
+@keyframes flowGlow{
+0%{transform:translateX(-100%);}
+100%{transform:translateX(100%);}
+}
+
+/* TOOLTIP */
+.node span{
+visibility:hidden;
+position:absolute;
+bottom:130%;
+left:50%;
+transform:translateX(-50%);
+background:#000;
+padding:6px;
+border-radius:5px;
+font-size:10px;
+width:170px;
+opacity:0.9;
+}
+
+.node:hover span{
+visibility:visible;
+}
+
+/* ANIMATION */
+@keyframes fadeIn{
+to{
+opacity:1;
+transform:translateY(0);
+}
+}
+
+.level-title{
+margin-top:14px;
+color:#7ecbff;
+font-size:14px;
+}
+
+h2{
+font-size:16px;
+margin-bottom:6px;
+}
+
+</style>
+</head>
+
+<body>
+
+<!-- FIXED HEADER -->
+<div class="header-wrap">
+<div class="container">
+
+<div class="header">
+<img src="nsulogo.jpg" class="logo-left">
+<img src="sbe-logo.png" class="logo-right">
+<h1>NSU E/MBA CGPA ESTIMATOR</h1>
+<div class="sub">Developed by MBA and EMBA Program</div>
+</div>
+
+<div class="nav">
+<a href="index.html">Home</a>
+<a href="flowchart.html">Course Flowchart</a>
+<a href="gpolicy.html">Grading Policy</a>
+<a href="help.html">User Guideline</a>
+<a href="https://www.northsouth.edu/academic/sbe/mba-emba/" target="_blank">
+NSU E/MBA Official Website
+</a>
+</div>
+
+</div>
+</div>
+
+<!-- SCROLLABLE CONTENT -->
+<div class="content">
+
+<!-- MBA NEW -->
+<div class="flow">
+<h2>MBA (After 2019 Batch)</h2>
+
+<div class="level-title">Foundation</div>
+<div class="line">
+<div class="node">BUS 500</div><div class="arrow">→</div>
+<div class="node">BUS 505</div><div class="arrow">→</div>
+<div class="node">BUS 511</div><div class="arrow">→</div>
+<div class="node">BUS 516</div><div class="arrow">→</div>
+<div class="node">BUS 518</div><div class="arrow">→</div>
+<div class="node">BUS 520</div><div class="arrow">→</div>
+<div class="node">BUS 525</div><div class="arrow">→</div>
+<div class="node">BUS 530<span>Pre: BUS 501, 511, 525</span></div><div class="arrow">→</div>
+<div class="node">BUS 535<span>Pre: BUS 501, 511, 525</span></div>
+</div>
+
+<div class="level-title">Advanced</div>
+<div class="line">
+<div class="node">BUS 601<span>Must for non-business & HRM</span></div><div class="arrow">→</div>
+<div class="node">BUS 620<span>For HRM</span></div><div class="arrow">→</div>
+<div class="node">BUS 635<span>For Finance</span></div><div class="arrow">→</div>
+<div class="node">BUS 650</div><div class="arrow">→</div>
+<div class="node">BUS 685</div>
+</div>
+
+<div class="level-title">Major</div>
+<div class="line">
+<div class="node">Choose 4 (FIN/MKT/MGT/HRM/MIS/SCM)</div>
+</div>
+
+<div class="level-title">Integrative</div>
+<div class="line">
+<div class="node">BUS 690</div>
+</div>
+
+<div class="level-title">Open Elective</div>
+<div class="line">
+<div class="node">Open Elective</div>
+</div>
+
+</div>
+
+<!-- MBA OLD -->
+<div class="flow">
+<h2>MBA (2019 or Previous Batch)</h2>
+
+<div class="level-title">Foundation</div>
+<div class="line">
+<div class="node">BUS 500</div><div class="arrow">→</div>
+<div class="node">BUS 505</div><div class="arrow">→</div>
+<div class="node">BUS 511</div><div class="arrow">→</div>
+<div class="node">BUS 516</div><div class="arrow">→</div>
+<div class="node">BUS 518</div><div class="arrow">→</div>
+<div class="node">BUS 520</div><div class="arrow">→</div>
+<div class="node">BUS 525</div><div class="arrow">→</div>
+<div class="node">BUS 530<span>Pre: BUS 501, 511, 525</span></div>
+</div>
+
+<div class="level-title">Advanced</div>
+<div class="line">
+<div class="node">BUS 601<span>Must for non-business & HRM</span></div><div class="arrow">→</div>
+<div class="node">BUS 620<span>For HRM</span></div><div class="arrow">→</div>
+<div class="node">BUS 635<span>For Finance</span></div><div class="arrow">→</div>
+<div class="node">BUS 650</div><div class="arrow">→</div>
+<div class="node">BUS 685</div>
+</div>
+
+<div class="level-title">Major</div>
+<div class="line">
+<div class="node">Choose 4 Courses</div>
+</div>
+
+<div class="level-title">Open Electives</div>
+<div class="line">
+<div class="node">Open Elective 1</div><div class="arrow">→</div>
+<div class="node">Open Elective 2</div>
+</div>
+
+</div>
+
+<!-- EMBA -->
+<div class="flow">
+<h2>EMBA</h2>
+
+<div class="level-title">Foundation</div>
+<div class="line">
+<div class="node">EMB 500</div><div class="arrow">→</div>
+<div class="node">EMB 501</div><div class="arrow">→</div>
+<div class="node">EMB 502<span>Pre: EMB 501</span></div><div class="arrow">→</div>
+<div class="node">EMB 510</div><div class="arrow">→</div>
+<div class="node">EMB 520</div>
+</div>
+
+<div class="level-title">Functional Core</div>
+<div class="line">
+<div class="node">EMB 601<span>Pre: EMB 520</span></div><div class="arrow">→</div>
+<div class="node">EMB 602<span>Pre: EMB 520</span></div><div class="arrow">→</div>
+<div class="node">EMB 620<span>Pre: EMB 520</span></div><div class="arrow">→</div>
+<div class="node">EMB 650</div><div class="arrow">→</div>
+<div class="node">EMB 660</div><div class="arrow">→</div>
+<div class="node">EMB 670</div><div class="arrow">→</div>
+<div class="node">EMB 690</div><div class="arrow">→</div>
+<div class="node">BUS 700</div>
+</div>
+
+<div class="level-title">Major</div>
+<div class="line">
+<div class="node">Choose 4 Courses</div>
+</div>
+
+</div>
+
+<p style="text-align:center;margin-top:20px;font-size:12px;">
+For more details, please log onto our official website.
+</p>
+
+</div>
+
+</body>
+</html>

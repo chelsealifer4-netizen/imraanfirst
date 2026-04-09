@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>User Guideline</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Josefin+Sans:wght@400;600&display=swap" rel="stylesheet">
+
+<style>
+
+body{
+margin:0;
+font-family:'Josefin Sans';
+background:linear-gradient(135deg,#0b1f3a,#123a7a);
+color:white;
+height:100vh;
+overflow:hidden;
+}
+
+/* HEADER */
+.header-wrap{
+position:fixed;
+top:0;
+width:100%;
+background:rgba(11,31,58,0.95);
+z-index:1000;
+padding-bottom:10px;
+transition:transform 0.3s ease;
+}
+
+.header-hidden{
+transform:translateY(-100%);
+}
+
+.container{
+max-width:720px;
+margin:auto;
+padding:10px 20px;
+}
+
+.header{text-align:center;position:relative;}
+.logo-left{position:absolute;left:0;top:10px;width:50px;}
+.logo-right{position:absolute;right:0;top:10px;width:50px;}
+
+h1{margin:0;color:#7ecbff;}
+.sub{font-size:13px;}
+
+.nav{text-align:center;margin-top:8px;}
+.nav a{
+margin:3px;
+padding:5px 10px;
+background:#66b2ff;
+border-radius:20px;
+color:white;
+text-decoration:none;
+font-size:11px;
+position:relative;
+overflow:hidden;
+}
+
+/* RIPPLE EFFECT */
+.nav a::after{
+content:'';
+position:absolute;
+width:0;
+height:0;
+background:rgba(255,255,255,0.5);
+border-radius:50%;
+transform:translate(-50%,-50%);
+top:50%;
+left:50%;
+opacity:0;
+}
+
+.nav a:active::after{
+width:120px;
+height:120px;
+opacity:0.3;
+transition:0.4s;
+}
+
+.nav a:hover{
+background:#00e676;
+color:black;
+}
+
+/* CONTENT */
+.content{
+position:absolute;
+top:140px;
+bottom:0;
+left:0;
+right:0;
+overflow-y:auto;
+max-width:720px;
+margin:auto;
+padding:20px;
+scroll-behavior:smooth;
+scrollbar-width:none;
+}
+.content::-webkit-scrollbar{display:none;}
+
+/* CARDS */
+.card{
+background:rgba(255,255,255,0.08);
+padding:15px;
+margin-bottom:15px;
+border-radius:12px;
+opacity:0;
+transform:translateY(20px);
+transition:all 0.5s ease;
+}
+.card.visible{
+opacity:1;
+transform:translateY(0);
+}
+
+.card:hover{
+box-shadow:0 4px 15px rgba(0,230,118,0.4);
+transform:translateY(-3px);
+}
+
+.card.active{
+border:1px solid #00e676;
+}
+
+h2{text-align:center;color:#7ecbff;}
+
+/* BACK TO TOP */
+#topBtn{
+position:fixed;
+bottom:20px;
+right:20px;
+background:#00e676;
+color:black;
+padding:8px 12px;
+border:none;
+border-radius:20px;
+cursor:pointer;
+display:none;
+opacity:0;
+transition:0.3s;
+}
+#topBtn.show{
+display:block;
+opacity:1;
+}
+
+/* GUIDE */
+#guide{
+position:fixed;
+top:0;
+left:0;
+width:100%;
+height:100%;
+background:rgba(0,0,0,0.8);
+display:flex;
+justify-content:center;
+align-items:center;
+z-index:2000;
+}
+
+.guide-box{
+background:white;
+color:black;
+padding:20px;
+border-radius:10px;
+max-width:300px;
+text-align:center;
+}
+
+.guide-box button{
+margin-top:10px;
+padding:6px 12px;
+border:none;
+background:#00e676;
+cursor:pointer;
+}
+
+</style>
+</head>
+
+<body>
+
+<!-- GUIDE -->
+<div id="guide">
+<div class="guide-box">
+<h3>Welcome 👋</h3>
+<p>This guide helps you use the CGPA Estimator easily.</p>
+<button onclick="closeGuide()">Got it</button>
+</div>
+</div>
+
+<!-- HEADER -->
+<div class="header-wrap" id="header">
+<div class="container">
+
+<div class="header">
+<img src="nsulogo.jpg" class="logo-left">
+<img src="sbe-logo.png" class="logo-right">
+<h1>NSU E/MBA CGPA ESTIMATOR</h1>
+<div class="sub">Developed by MBA and EMBA Program</div>
+</div>
+
+<div class="nav">
+<a href="index.html">Home</a>
+<a href="flowchart.html">Course Flowchart</a>
+<a href="gpolicy.html">Grading Policy</a>
+<a href="help.html">User Guideline</a>
+<a href="https://www.northsouth.edu/academic/sbe/mba-emba/" target="_blank">
+NSU Official Website
+</a>
+</div>
+
+</div>
+</div>
+
+<!-- CONTENT -->
+<div class="content" id="content">
+
+<h2>User Guideline</h2>
+
+<div class="card"> 
+<ul>
+<li>Select Program → MBA or EMBA</li>
+<li>Select Batch (if MBA)</li>
+<li>Add Course + Grade</li>
+<li>Click Add</li>
+</ul>
+</div>
+
+<div class="card">
+<ul>
+<li>Track CGPA instantly</li>
+<li>Monitor level progress</li>
+<li>Follow AI Advisor</li>
+</ul>
+</div>
+
+<div class="card">
+<ul>
+<li>Use navigation anytime</li>
+<li>Reset using Clear</li>
+<li>Everything updates live</li>
+</ul>
+</div>
+
+</div>
+
+<button id="topBtn" onclick="topScroll()">↑ Top</button>
+
+<script>
+
+/* GUIDE */
+function closeGuide(){
+document.getElementById("guide").style.display="none";
+}
+
+/* SCROLL EVENTS */
+const content = document.getElementById("content");
+const btn = document.getElementById("topBtn");
+const header = document.getElementById("header");
+
+let lastScroll = 0;
+
+content.addEventListener("scroll",()=>{
+let current = content.scrollTop;
+
+/* TOP BUTTON */
+if(current > 200){
+btn.classList.add("show");
+}else{
+btn.classList.remove("show");
+}
+
+/* HEADER AUTO HIDE */
+if(current > lastScroll){
+header.classList.add("header-hidden");
+}else{
+header.classList.remove("header-hidden");
+}
+lastScroll = current;
+
+/* CARD ANIMATION */
+document.querySelectorAll('.card').forEach(card=>{
+let rect = card.getBoundingClientRect();
+if(rect.top < window.innerHeight - 50){
+card.classList.add('visible');
+}
+});
+
+});
+
+/* SCROLL TOP */
+function topScroll(){
+content.scrollTo({top:0,behavior:"smooth"});
+}
+
+/* KEY SHORTCUT */
+document.addEventListener("keydown",(e)=>{
+if(e.key.toLowerCase()==="h"){
+document.getElementById("guide").style.display="flex";
+}
+});
+
+</script>
+
+</body>
+</html>
