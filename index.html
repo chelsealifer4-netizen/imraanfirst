@@ -50,7 +50,7 @@ select{flex:1;padding:6px;border-radius:6px;border:none;}
 .row{display:flex;gap:5px;margin:4px 0;}
 .row select{flex:1;}
 
-button{padding:4px 6px;font-size:11px;border:none;border-radius:5px;background:#66b2ff;color:white;}
+button{padding:4px 6px;font-size:11px;border:none;border-radius:5px;background:#66b2ff;color:white;cursor:pointer;}
 .clear{background:red;}
 
 .result{display:flex;justify-content:space-between;margin-top:5px;}
@@ -69,6 +69,21 @@ padding:8px;
 border-radius:8px;
 font-size:12px;
 white-space:pre-line;
+}
+
+.simulator{
+margin-top:8px;
+background:rgba(0,0,0,0.3);
+padding:8px;
+border-radius:8px;
+font-size:12px;
+}
+
+.progress-container{
+margin-top:10px;
+background:rgba(255,255,255,0.1);
+padding:10px;
+border-radius:10px;
 }
 </style>
 </head>
@@ -94,7 +109,7 @@ white-space:pre-line;
 
 <div class="grid">
 
-<!-- LEFT PANEL -->
+<!-- LEFT -->
 <div class="panel">
 
 <div class="select-row">
@@ -104,7 +119,7 @@ white-space:pre-line;
 <option>EMBA</option>
 </select>
 
-<select id="batch" onchange="clearAll()">
+<select id="batch" onchange="handleBatch()">
 <option value="">Select Batch</option>
 <option value="new">After 2019</option>
 <option value="old">2019 or Previous</option>
@@ -123,13 +138,25 @@ white-space:pre-line;
 
 </div>
 
-<!-- RIGHT PANEL -->
+<!-- RIGHT -->
 <div class="panel">
 
+<!-- EXISTING PROGRESS -->
+<div class="progress-container">
 <div class="progress-bar"><div id="bar" class="progress-fill"></div></div>
-
 <div id="levels"></div>
+</div>
+
+<!-- NEW AI LEVEL PROGRESS -->
+<div class="progress-container">
+<div style="font-size:13px;margin-bottom:5px;">🧠 AI Level Progress</div>
+<div class="progress-bar"><div id="aiBar" class="progress-fill"></div></div>
+<div id="aiLevels"></div>
+<div id="degreeMsg" style="margin-top:6px;font-size:12px;"></div>
+</div>
+
 <div id="advisor" class="advisor"></div>
+<div id="simulator" class="simulator"></div>
 <div id="status"></div>
 
 </div>
@@ -140,13 +167,18 @@ white-space:pre-line;
 
 <script>
 
-let gradeMap={"A":4,"A-":3.7,"B+":3.3,"B":3,"B-":2.7,"C+":2.3,"C":2,"C-":1.7,"D+":1.3,"D":1,"F":0,"Waived":0};
+let gradeMap={
+"A":4,"A-":3.7,"B+":3.3,"B":3,"B-":2.7,
+"C+":2.3,"C":2,"C-":1.7,"D+":1.3,"D":1,"F":0,"Waived":0
+};
 
 function handleProgram(){
 let p=document.getElementById("program").value;
 document.getElementById("batch").style.display=(p==="MBA")?"block":"none";
 clearAll();
 }
+
+function handleBatch(){ clearAll(); }
 
 function getCourses(){
 let p=document.getElementById("program").value;
@@ -155,34 +187,21 @@ let b=document.getElementById("batch").value;
 let majors=["MAJOR1","MAJOR2","MAJOR3","MAJOR4","MAJOR5","MAJOR6","MAJOR7","MAJOR8"];
 
 if(p==="MBA"){
-if(b==="new"){
-return ["BUS 500","BUS 501","BUS 505","BUS 511","BUS 516","BUS 518","BUS 520","BUS 525","BUS 530","BUS 535",
-"BUS 601","BUS 620","BUS 635","BUS 650","BUS 685","BUS 690",
-"BUS 698","BUS 699","Open Elective",...majors];
+if(b==="new") return ["BUS 500","BUS 501","BUS 505","BUS 511","BUS 516","BUS 518","BUS 520","BUS 525","BUS 530","BUS 535","BUS 601","BUS 620","BUS 635","BUS 650","BUS 685","BUS 690","BUS 698","BUS 699","Open Elective",...majors];
+if(b==="old") return ["BUS 500","BUS 501","BUS 505","BUS 511","BUS 516","BUS 518","BUS 520","BUS 525","BUS 530","BUS 601","BUS 620","BUS 635","BUS 650","BUS 685","BUS 690","BUS 698","Open Elective 1","Open Elective 2",...majors];
 }
-if(b==="old"){
-return ["BUS 500","BUS 501","BUS 505","BUS 511","BUS 516","BUS 518","BUS 520","BUS 525","BUS 530",
-"BUS 601","BUS 620","BUS 635","BUS 650","BUS 685","BUS 690",
-"BUS 698","Open Elective 1","Open Elective 2",...majors];
-}
-}
-
 if(p==="EMBA"){
-return ["EMB 500","EMB 501","EMB 502","EMB 510","EMB 520",
-"EMB 601","EMB 602","EMB 620","EMB 650","EMB 660","EMB 670","EMB 690","BUS 700",
-...majors];
+return ["EMB 500","EMB 501","EMB 502","EMB 510","EMB 520","EMB 601","EMB 602","EMB 620","EMB 650","EMB 660","EMB 670","EMB 690","BUS 700",...majors];
 }
-
 return [];
 }
 
 function addRow(){
-
 let p=document.getElementById("program").value;
 let b=document.getElementById("batch").value;
 
-if(!p) return alert("Select Program");
-if(p==="MBA"&&!b) return alert("Select Batch");
+if(!p) return alert("Select Program first");
+if(p==="MBA"&&!b) return alert("Select Batch first");
 
 let div=document.createElement("div");
 div.className="row";
@@ -195,8 +214,9 @@ ${getCourses().map(c=>`<option>${c}</option>`)}
 
 <select class="grade">
 <option value="">Select Grade</option>
-<option>A</option><option>A-</option><option>B+</option><option>B</option>
-<option>C</option><option>F</option><option>Waived</option>
+<option>A</option><option>A-</option><option>B+</option><option>B</option><option>B-</option>
+<option>C+</option><option>C</option><option>C-</option><option>D+</option><option>D</option>
+<option>F</option><option>Waived</option>
 </select>
 
 <button onclick="this.parentElement.remove();calculate()">X</button>
@@ -210,7 +230,6 @@ function calculate(){
 
 let rows=document.querySelectorAll(".row");
 let passed={},failed={},waived={};
-
 let totalPoints=0,totalCredits=0;
 
 rows.forEach(r=>{
@@ -218,7 +237,6 @@ let c=r.querySelector(".course").value;
 let g=r.querySelector(".grade").value;
 if(!c||!g)return;
 
-/* CREDIT RULES */
 let credit=3;
 let program=document.getElementById("program").value;
 let batch=document.getElementById("batch").value;
@@ -244,102 +262,93 @@ let cgpa=totalCredits?(totalPoints/totalCredits).toFixed(2):"0.00";
 document.getElementById("cgpa").innerText=cgpa;
 document.getElementById("credits").innerText=totalCredits;
 
-/* ===== PROGRESS + AI ===== */
+/* SIMULATOR */
+let simA=((totalPoints+12)/(totalCredits+3)).toFixed(2);
+let simB=((totalPoints+9)/(totalCredits+3)).toFixed(2);
 
+document.getElementById("simulator").innerText=
+`📊 Next Course Prediction:
+If A → CGPA: ${simA}
+If B → CGPA: ${simB}`;
+
+/* AI ADVISOR */
+let aiAdvice="";
+if(cgpa>=3.7) aiAdvice="🔥 Excellent performance.";
+else if(cgpa>=3.3) aiAdvice="💡 Doing well.";
+else if(cgpa>=3.0) aiAdvice="⚠️ Improve performance.";
+else if(cgpa>=2.75) aiAdvice="📘 Maintain carefully.";
+else aiAdvice="🚨 Critical zone.";
+
+document.getElementById("advisor").innerText=aiAdvice;
+
+/* NEW AI LEVEL PROGRESS */
+let aiPercent=0, html="", ready=false;
 let program=document.getElementById("program").value;
-let batch=document.getElementById("batch").value;
-
-let percent=0,levels="",advisor="";
 
 if(program==="MBA"){
+let f=["BUS 500","BUS 501","BUS 505","BUS 511","BUS 516","BUS 518","BUS 520","BUS 525","BUS 530","BUS 535"];
+let a=["BUS 601","BUS 620","BUS 635","BUS 650","BUS 685","BUS 690"];
+let m=["MAJOR1","MAJOR2","MAJOR3","MAJOR4"];
 
-let foundation=["BUS 500","BUS 501","BUS 505","BUS 511","BUS 516","BUS 518","BUS 520","BUS 525","BUS 530","BUS 535"];
-let advanced=["BUS 601","BUS 620","BUS 635","BUS 650","BUS 685"];
-let major=["MAJOR1","MAJOR2","MAJOR3","MAJOR4"];
+let fC=f.filter(c=>passed[c]||waived[c]).length;
+let aC=a.filter(c=>passed[c]).length;
+let mC=m.filter(c=>passed[c]).length;
 
-let fCount=foundation.filter(c=>passed[c]||waived[c]).length;
-let aCount=advanced.filter(c=>passed[c]).length;
-let mCount=major.filter(c=>passed[c]).length;
+let fD=fC===f.length, aD=aC===a.length, mD=mC===4;
+let eD=passed["Open Elective"]||passed["BUS 698"]||passed["BUS 699"];
 
-let fDone=foundation.every(c=>(passed[c]||waived[c])&&!failed[c]);
-let aDone=advanced.every(c=>passed[c]&&!failed[c]);
-let mDone=mCount===4;
-let iDone=passed["BUS 690"];
+if(fD)aiPercent+=25;
+if(aD)aiPercent+=25;
+if(mD)aiPercent+=25;
+if(eD)aiPercent+=25;
 
-let oDone=false;
-if(batch==="new"){
-oDone=passed["Open Elective"]||passed["BUS 699"];
-}
-if(batch==="old"){
-oDone=(passed["Open Elective 1"]&&passed["Open Elective 2"])||
-      (passed["BUS 698"]&&passed["Open Elective"]);
-}
-
-if(fDone) percent+=20;
-if(aDone) percent+=20;
-if(mDone) percent+=20;
-if(iDone) percent+=20;
-if(oDone) percent+=20;
-
-levels=`
-<div class="level ${fDone?'done':'notdone'}">Foundation: ${fCount}/9</div>
-<div class="level ${aDone?'done':'notdone'}">Advanced: ${aCount}/5</div>
-<div class="level ${mDone?'done':'notdone'}">Major: ${mCount}/4</div>
-<div class="level ${iDone?'done':'notdone'}">Integrative</div>
-<div class="level ${oDone?'done':'notdone'}">Open Elective</div>
+html=`
+<div class="${fD?'done':'notdone'}">Foundation ${fC}/${f.length}</div>
+<div class="${aD?'done':'notdone'}">Advanced ${aC}/${a.length}</div>
+<div class="${mD?'done':'notdone'}">Major ${mC}/4</div>
+<div class="${eD?'done':'notdone'}">Elective</div>
 `;
 
-if(!fDone) advisor="📘 Missing: "+foundation.filter(c=>!passed[c]&&!waived[c]).join(", ");
-else if(!aDone) advisor="📗 Missing: "+advanced.filter(c=>!passed[c]).join(", ");
-else if(!mDone) advisor="🎯 Missing: "+major.filter(c=>!passed[c]).join(", ");
-else if(!iDone) advisor="📙 Complete BUS 690";
-else if(!oDone) advisor="📕 Complete Open Elective";
-else advisor="🎓 All requirements complete!";
+ready=fD&&aD&&mD&&eD&&cgpa>=2.75;
 }
 
 if(program==="EMBA"){
+let f=["EMB 500","EMB 501","EMB 502","EMB 510","EMB 520"];
+let func=["EMB 601","EMB 602","EMB 620","EMB 650","EMB 660","EMB 670","EMB 690","BUS 700"];
+let m=["MAJOR1","MAJOR2","MAJOR3","MAJOR4"];
 
-let foundation=["EMB 500","EMB 501","EMB 502","EMB 510","EMB 520"];
-let functional=["EMB 601","EMB 602","EMB 620","EMB 650","EMB 660","EMB 670","EMB 690","BUS 700"];
-let major=["MAJOR1","MAJOR2","MAJOR3","MAJOR4"];
+let fC=f.filter(c=>passed[c]).length;
+let funcC=func.filter(c=>passed[c]).length;
+let mC=m.filter(c=>passed[c]).length;
 
-let fCount=foundation.filter(c=>passed[c]).length;
-let funcCount=functional.filter(c=>passed[c]).length;
-let mCount=major.filter(c=>passed[c]).length;
+let fD=fC===5, funcD=funcC===8, mD=mC===4;
 
-let fDone=fCount===5;
-let funcDone=funcCount===8;
-let mDone=mCount===4;
+if(fD)aiPercent+=33;
+if(funcD)aiPercent+=33;
+if(mD)aiPercent+=34;
 
-if(fDone) percent+=33;
-if(funcDone) percent+=33;
-if(mDone) percent+=34;
-
-levels=`
-<div class="level ${fDone?'done':'notdone'}">Foundation: ${fCount}/5</div>
-<div class="level ${funcDone?'done':'notdone'}">Functional: ${funcCount}/8</div>
-<div class="level ${mDone?'done':'notdone'}">Major: ${mCount}/4</div>
+html=`
+<div class="${fD?'done':'notdone'}">Foundation ${fC}/5</div>
+<div class="${funcD?'done':'notdone'}">Functional ${funcC}/8</div>
+<div class="${mD?'done':'notdone'}">Major ${mC}/4</div>
 `;
 
-if(!fDone) advisor="📘 Missing: "+foundation.filter(c=>!passed[c]).join(", ");
-else if(!funcDone) advisor="📗 Missing: "+functional.filter(c=>!passed[c]).join(", ");
-else if(!mDone) advisor="🎯 Missing: "+major.filter(c=>!passed[c]).join(", ");
-else advisor="🎓 All requirements complete!";
+ready=fD&&funcD&&mD&&cgpa>=2.75;
 }
 
-document.getElementById("bar").style.width=percent+"%";
-document.getElementById("levels").innerHTML=levels;
-document.getElementById("advisor").innerText=advisor;
+document.getElementById("aiBar").style.width=aiPercent+"%";
+document.getElementById("aiLevels").innerHTML=html;
+document.getElementById("degreeMsg").innerText=
+ready?"🎓 NOW YOU CAN APPLY DEGREE ANALYSIS":"";
 
 document.getElementById("status").innerText =
-(percent===100 && cgpa>=2.75)
-? "✅ Eligible for Degree"
-: "❌ Not Completed";
+(cgpa>=2.75) ? "✅ On Track" : "❌ Risk Zone";
 
 }
 
 function clearAll(){
 document.getElementById("rows").innerHTML="";
+document.getElementById("simulator").innerText="";
 calculate();
 }
 
