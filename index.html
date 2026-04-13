@@ -2,159 +2,73 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>NSU E/MBA CGPA Estimator</title>
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NSU E/MBA CGPA ESTIMATOR</title>
 
 <link href="https://fonts.googleapis.com/css2?family=Josefin+Sans:wght@400;600&display=swap" rel="stylesheet">
 
 <style>
 body{
+margin:0;
 font-family:'Josefin Sans';
 background:linear-gradient(135deg,#0b1f3a,#123a7a);
 color:white;
 display:flex;
 justify-content:center;
+padding:30px;
+}
+
+.container{
+width:720px;
+background:rgba(255,255,255,0.08);
+border-radius:20px;
 padding:20px;
 }
 
-/* CONTAINER */
-.container{
-width:720px;
-}
+.header{text-align:center;position:relative;}
+.logo-left{position:absolute;left:0;top:50%;transform:translateY(-50%);width:60px;}
+.logo-right{position:absolute;right:0;top:50%;transform:translateY(-50%);width:55px;}
 
-/* HEADER */
-.header{
-text-align:center;
-margin-bottom:10px;
-}
-.header img{
-width:70px;
-margin-bottom:5px;
-}
+h1{color:#7ecbff;margin:0;}
+.sub{font-size:13px;}
 
-h1{
-color:#66b2ff;
-margin:5px 0;
-}
-
-.sub{
-font-size:13px;
-color:#ccc;
-}
-
-/* NAV */
-.nav{
-text-align:center;
-margin:15px 0;
-}
+.nav{text-align:center;margin:10px 0;}
 .nav a{
-margin:5px;
-padding:8px 14px;
-background:#66b2ff;
-border-radius:20px;
-color:white;
-text-decoration:none;
-transition:0.3s;
-}
-.nav a:hover{
-background:#3399ff;
+margin:3px;padding:5px 10px;
+background:#66b2ff;border-radius:20px;
+color:white;text-decoration:none;font-size:12px;
 }
 
-/* GRID */
-.grid{
-display:flex;
-gap:15px;
-}
+.select-row{display:flex;gap:6px;margin-bottom:10px;}
+select{flex:1;padding:6px;border-radius:6px;border:none;}
+#batch{display:none;}
 
-/* PANEL */
-.panel{
-width:50%;
-background:rgba(255,255,255,0.08);
-backdrop-filter:blur(10px);
-padding:12px;
-border-radius:12px;
-box-shadow:0 0 10px rgba(0,0,0,0.3);
-}
+.grid{display:flex;gap:10px;}
+.panel{flex:1;background:rgba(255,255,255,0.08);padding:10px;border-radius:10px;}
 
-/* SELECT */
-.selects{
-display:flex;
-gap:5px;
-margin-bottom:10px;
-}
-select{
-flex:1;
-padding:6px;
-border-radius:6px;
-border:none;
-}
+#rows{max-height:220px;overflow-y:auto;}
 
-/* COURSE LIST */
-.course-container{
-max-height:220px;
-overflow-y:auto;
-}
-
-.row{
-display:flex;
-gap:5px;
-margin:5px 0;
-}
+.row{display:flex;gap:5px;margin:4px 0;}
 .row select{flex:1;}
 
-button{
-padding:6px 8px;
-border:none;
-border-radius:6px;
-background:#66b2ff;
-color:white;
-cursor:pointer;
-}
-.clear{background:#ff5252;}
+button{padding:4px 6px;font-size:11px;border:none;border-radius:5px;background:#66b2ff;color:white;}
+.clear{background:red;}
 
-.btns{
-text-align:center;
-margin-top:10px;
-}
+.result{display:flex;justify-content:space-between;margin-top:5px;}
 
-/* RESULT */
-.result{
-display:flex;
-justify-content:space-between;
-background:#ffffff20;
-padding:10px;
-border-radius:10px;
-margin-top:10px;
-font-weight:bold;
-}
-.cgpa{color:#00e676;}
+.progress-bar{height:12px;background:#ccc;border-radius:10px;margin:5px 0;}
+.progress-fill{height:100%;background:#00e676;width:0%;}
 
-/* PROGRESS */
-.progress-bar{
-height:10px;
-background:#ccc;
-border-radius:10px;
-overflow:hidden;
-margin-top:10px;
-}
-.progress-fill{
-height:100%;
-background:#00e676;
-width:0%;
-transition:0.5s;
-}
-
-.progress-item{
-margin:6px 0;
-}
-
+.level{font-size:12px;margin:3px 0;}
 .done{color:#00e676;}
 .notdone{color:#ff5252;}
 
-.status{
-margin-top:10px;
-font-weight:bold;
-text-align:center;
+.advisor{
+margin-top:6px;
+background:rgba(255,255,255,0.1);
+padding:8px;
+border-radius:8px;
+font-size:12px;
+white-space:pre-line;
 }
 </style>
 </head>
@@ -163,65 +77,60 @@ text-align:center;
 
 <div class="container">
 
-<!-- HEADER -->
 <div class="header">
-<img src="https://upload.wikimedia.org/wikipedia/en/4/4a/North_South_University_logo.png">
-<h1>NSU E/MBA CGPA Estimator</h1>
-<div class="sub">Initiated and Developed by MBA & EMBA Program</div>
+<img src="nsulogo.jpg" class="logo-left">
+<img src="sbe-logo.png" class="logo-right">
+<h1>NSU E/MBA CGPA ESTIMATOR</h1>
+<div class="sub">Developed by MBA and EMBA Program</div>
 </div>
 
-<!-- NAV -->
 <div class="nav">
 <a href="index.html">Home</a>
 <a href="flowchart.html">Course Flowchart</a>
 <a href="gpolicy.html">Grading Policy</a>
 <a href="help.html">User Guideline</a>
-<a href="https://www.northsouth.edu/academic/sbe/mba-emba/" target="_blank">Official Website</a>
+<a href="https://www.northsouth.edu/academic/sbe/mba-emba/" target="_blank">Official</a>
 </div>
 
 <div class="grid">
 
-<!-- LEFT -->
+<!-- LEFT PANEL -->
 <div class="panel">
 
-<div class="selects">
-<select id="program" onchange="resetAll()">
-<option value="">Program</option>
-<option value="MBA">MBA</option>
-<option value="EMBA">EMBA</option>
+<div class="select-row">
+<select id="program" onchange="handleProgram()">
+<option value="">Select Program</option>
+<option>MBA</option>
+<option>EMBA</option>
 </select>
 
-<select id="batch" onchange="resetAll()">
+<select id="batch" onchange="clearAll()">
+<option value="">Select Batch</option>
 <option value="new">After 2019</option>
 <option value="old">2019 or Previous</option>
 </select>
 </div>
 
-<div class="course-container" id="rows"></div>
+<div id="rows"></div>
 
-<div class="btns">
-<button onclick="addRow()">+ Add Course</button>
+<button onclick="addRow()">Add</button>
 <button class="clear" onclick="clearAll()">Clear</button>
-</div>
 
 <div class="result">
-<div>CGPA: <span class="cgpa" id="cgpa">0.00</span></div>
+<div>CGPA: <span id="cgpa">0.00</span></div>
 <div>Credits: <span id="credits">0</span></div>
 </div>
 
 </div>
 
-<!-- RIGHT -->
+<!-- RIGHT PANEL -->
 <div class="panel">
 
-<h3 style="text-align:center;">Progress</h3>
+<div class="progress-bar"><div id="bar" class="progress-fill"></div></div>
 
-<div class="progress-bar">
-<div class="progress-fill" id="bar"></div>
-</div>
-
-<div id="progress"></div>
-<div class="status" id="status"></div>
+<div id="levels"></div>
+<div id="advisor" class="advisor"></div>
+<div id="status"></div>
 
 </div>
 
@@ -231,38 +140,65 @@ text-align:center;
 
 <script>
 
-let gradeMap={"A":4,"A-":3.7,"B+":3.3,"B":3,"B-":2.7,"C+":2.3,"C":2,"F":0};
+let gradeMap={"A":4,"A-":3.7,"B+":3.3,"B":3,"C":2};
+
+function handleProgram(){
+let p=document.getElementById("program").value;
+document.getElementById("batch").style.display=(p==="MBA")?"block":"none";
+clearAll();
+}
 
 function getCourses(){
 let p=document.getElementById("program").value;
 let b=document.getElementById("batch").value;
 
+let majors=["MAJOR1","MAJOR2","MAJOR3","MAJOR4","MAJOR5","MAJOR6","MAJOR7","MAJOR8"];
+
 if(p==="MBA"){
-if(b==="old") return ["BUS 500","BUS 501","BUS 505","BUS 511","BUS 516","BUS 518","BUS 520","BUS 525","BUS 530","BUS 601","BUS 620","BUS 635","BUS 650","BUS 685","BUS 690","BUS 698","Open Elective 1","Open Elective 2","MAJOR1","MAJOR2","MAJOR3","MAJOR4","MAJOR5","MAJOR6","MAJOR7","MAJOR8"];
-return ["BUS 500","BUS 501","BUS 505","BUS 511","BUS 516","BUS 518","BUS 520","BUS 525","BUS 530","BUS 535","BUS 601","BUS 620","BUS 635","BUS 650","BUS 685","BUS 690","BUS 699","Open Elective","MAJOR1","MAJOR2","MAJOR3","MAJOR4","MAJOR5","MAJOR6","MAJOR7","MAJOR8"];
+if(b==="new"){
+return ["BUS 500","BUS 505","BUS 511","BUS 516","BUS 518","BUS 520","BUS 525","BUS 530","BUS 535",
+"BUS 601","BUS 620","BUS 635","BUS 650","BUS 685","BUS 690",
+"BUS 698","BUS 699","Open Elective",...majors];
+}
+if(b==="old"){
+return ["BUS 500","BUS 505","BUS 511","BUS 516","BUS 518","BUS 520","BUS 525","BUS 530",
+"BUS 601","BUS 620","BUS 635","BUS 650","BUS 685","BUS 690",
+"BUS 698","Open Elective 1","Open Elective 2",...majors];
+}
 }
 
 if(p==="EMBA"){
-return ["EMB 500","EMB 501","EMB 502","EMB 510","EMB 520","EMB 601","EMB 602","EMB 620","EMB 650","EMB 660","EMB 670","EMB 690","BUS 700","MAJOR1","MAJOR2","MAJOR3","MAJOR4","MAJOR5","MAJOR6","MAJOR7","MAJOR8"];
+return ["EMB 500","EMB 501","EMB 502","EMB 510","EMB 520",
+"EMB 601","EMB 602","EMB 620","EMB 650","EMB 660","EMB 670","EMB 690","BUS 700",
+...majors];
 }
 
 return [];
 }
 
 function addRow(){
-let courses=getCourses();
-if(!courses.length) return alert("Select program first");
+
+let p=document.getElementById("program").value;
+let b=document.getElementById("batch").value;
+
+if(!p) return alert("Select Program");
+if(p==="MBA"&&!b) return alert("Select Batch");
 
 let div=document.createElement("div");
 div.className="row";
 
 div.innerHTML=`
-<select class="course">${courses.map(c=>`<option>${c}</option>`).join("")}</select>
-<select class="grade">
-<option>A</option><option>A-</option><option>B+</option><option>B</option>
-<option>B-</option><option>C+</option><option>C</option>
-<option>F</option><option>Waived</option>
+<select class="course">
+<option value="">Select Course</option>
+${getCourses().map(c=>`<option>${c}</option>`)}
 </select>
+
+<select class="grade">
+<option value="">Select Grade</option>
+<option>A</option><option>A-</option><option>B+</option><option>B</option>
+<option>C</option><option>F</option><option>Waived</option>
+</select>
+
 <button onclick="this.parentElement.remove();calculate()">X</button>
 `;
 
@@ -273,49 +209,138 @@ div.querySelectorAll("select").forEach(s=>s.onchange=calculate);
 function calculate(){
 
 let rows=document.querySelectorAll(".row");
-let total=0,credits=0,done=0;
+let passed={},failed={},waived={};
+
+let totalPoints=0,totalCredits=0;
 
 rows.forEach(r=>{
 let c=r.querySelector(".course").value;
 let g=r.querySelector(".grade").value;
+if(!c||!g)return;
 
-if(g==="Waived" || c==="BUS 500") return;
-
+/* CREDIT RULES */
 let credit=3;
-if(c==="BUS 700") credit=2;
+let program=document.getElementById("program").value;
+let batch=document.getElementById("batch").value;
 
-credits+=credit;
+if(c==="BUS 500") credit=0;
+if(program==="EMBA" && c==="BUS 700") credit=2;
+if(program==="MBA"){
+if(batch==="old" && c==="BUS 698") credit=1;
+if(batch==="new" && c==="BUS 698") credit=0;
+}
 
-if(g!=="F"){
-done++;
-total+=credit*(gradeMap[g]||0);
+if(g==="Waived") waived[c]=true;
+else if(g==="F") failed[c]=true;
+else{
+passed[c]=true;
+totalCredits+=credit;
+totalPoints+=credit*gradeMap[g];
 }
 });
 
-let cgpa=credits?(total/credits).toFixed(2):"0.00";
+let cgpa=totalCredits?(totalPoints/totalCredits).toFixed(2):"0.00";
 
 document.getElementById("cgpa").innerText=cgpa;
-document.getElementById("credits").innerText=credits;
+document.getElementById("credits").innerText=totalCredits;
 
-/* PROGRESS % */
-let percent=Math.min((done/20)*100,100);
-document.getElementById("bar").style.width=percent+"%";
+/* ===== PROGRESS + AI ===== */
 
-/* STATUS */
-if(cgpa>=2.75 && percent===100){
-document.getElementById("status").innerText="✅ Eligible for Degree";
-}else{
-document.getElementById("status").innerText="❌ Degree Not Completed";
+let program=document.getElementById("program").value;
+let batch=document.getElementById("batch").value;
+
+let percent=0,levels="",advisor="";
+
+if(program==="MBA"){
+
+let foundation=["BUS 500","BUS 505","BUS 511","BUS 516","BUS 518","BUS 520","BUS 525","BUS 530","BUS 535"];
+let advanced=["BUS 601","BUS 620","BUS 635","BUS 650","BUS 685"];
+let major=["MAJOR1","MAJOR2","MAJOR3","MAJOR4"];
+
+let fCount=foundation.filter(c=>passed[c]||waived[c]).length;
+let aCount=advanced.filter(c=>passed[c]).length;
+let mCount=major.filter(c=>passed[c]).length;
+
+let fDone=foundation.every(c=>(passed[c]||waived[c])&&!failed[c]);
+let aDone=advanced.every(c=>passed[c]&&!failed[c]);
+let mDone=mCount===4;
+let iDone=passed["BUS 690"];
+
+let oDone=false;
+if(batch==="new"){
+oDone=passed["Open Elective"]||passed["BUS 699"];
 }
+if(batch==="old"){
+oDone=(passed["Open Elective 1"]&&passed["Open Elective 2"])||
+      (passed["BUS 698"]&&passed["Open Elective"]);
+}
+
+if(fDone) percent+=20;
+if(aDone) percent+=20;
+if(mDone) percent+=20;
+if(iDone) percent+=20;
+if(oDone) percent+=20;
+
+levels=`
+<div class="level ${fDone?'done':'notdone'}">Foundation: ${fCount}/9</div>
+<div class="level ${aDone?'done':'notdone'}">Advanced: ${aCount}/5</div>
+<div class="level ${mDone?'done':'notdone'}">Major: ${mCount}/4</div>
+<div class="level ${iDone?'done':'notdone'}">Integrative</div>
+<div class="level ${oDone?'done':'notdone'}">Open Elective</div>
+`;
+
+if(!fDone) advisor="📘 Missing: "+foundation.filter(c=>!passed[c]&&!waived[c]).join(", ");
+else if(!aDone) advisor="📗 Missing: "+advanced.filter(c=>!passed[c]).join(", ");
+else if(!mDone) advisor="🎯 Missing: "+major.filter(c=>!passed[c]).join(", ");
+else if(!iDone) advisor="📙 Complete BUS 690";
+else if(!oDone) advisor="📕 Complete Open Elective";
+else advisor="🎓 All requirements complete!";
+}
+
+if(program==="EMBA"){
+
+let foundation=["EMB 500","EMB 501","EMB 502","EMB 510","EMB 520"];
+let functional=["EMB 601","EMB 602","EMB 620","EMB 650","EMB 660","EMB 670","EMB 690","BUS 700"];
+let major=["MAJOR1","MAJOR2","MAJOR3","MAJOR4"];
+
+let fCount=foundation.filter(c=>passed[c]).length;
+let funcCount=functional.filter(c=>passed[c]).length;
+let mCount=major.filter(c=>passed[c]).length;
+
+let fDone=fCount===5;
+let funcDone=funcCount===8;
+let mDone=mCount===4;
+
+if(fDone) percent+=33;
+if(funcDone) percent+=33;
+if(mDone) percent+=34;
+
+levels=`
+<div class="level ${fDone?'done':'notdone'}">Foundation: ${fCount}/5</div>
+<div class="level ${funcDone?'done':'notdone'}">Functional: ${funcCount}/8</div>
+<div class="level ${mDone?'done':'notdone'}">Major: ${mCount}/4</div>
+`;
+
+if(!fDone) advisor="📘 Missing: "+foundation.filter(c=>!passed[c]).join(", ");
+else if(!funcDone) advisor="📗 Missing: "+functional.filter(c=>!passed[c]).join(", ");
+else if(!mDone) advisor="🎯 Missing: "+major.filter(c=>!passed[c]).join(", ");
+else advisor="🎓 All requirements complete!";
+}
+
+document.getElementById("bar").style.width=percent+"%";
+document.getElementById("levels").innerHTML=levels;
+document.getElementById("advisor").innerText=advisor;
+
+document.getElementById("status").innerText =
+(percent===100 && cgpa>=2.75)
+? "✅ Eligible for Degree"
+: "❌ Not Completed";
+
 }
 
 function clearAll(){
 document.getElementById("rows").innerHTML="";
 calculate();
-}
-
-function resetAll(){
-clearAll();
 }
 
 </script>
