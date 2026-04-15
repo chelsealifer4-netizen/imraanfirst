@@ -18,7 +18,7 @@ padding:30px;
 }
 
 .container{
-width:720px;
+width:760px;
 background:rgba(255,255,255,0.08);
 border-radius:20px;
 padding:20px;
@@ -55,15 +55,14 @@ button{padding:4px 6px;font-size:11px;border:none;border-radius:5px;background:#
 
 .result{display:flex;justify-content:space-between;margin-top:5px;}
 
-.progress-bar{height:12px;background:#ccc;border-radius:10px;margin:5px 0;}
-.progress-fill{height:100%;background:#00e676;width:0%;}
+.progress-bar{height:12px;background:#ccc;border-radius:10px;margin:5px 0;overflow:hidden;}
+.progress-fill{height:100%;background:#00e676;width:0%;border-radius:10px;transition:width 0.4s ease;}
 
-.level{font-size:12px;margin:3px 0;}
 .done{color:#00e676;}
 .notdone{color:#ff5252;}
 
-.advisor{
-margin-top:6px;
+.box{
+margin-top:8px;
 background:rgba(255,255,255,0.1);
 padding:8px;
 border-radius:8px;
@@ -71,19 +70,10 @@ font-size:12px;
 white-space:pre-line;
 }
 
-.simulator{
-margin-top:8px;
-background:rgba(0,0,0,0.3);
-padding:8px;
+canvas{
+background:white;
 border-radius:8px;
-font-size:12px;
-}
-
-.progress-container{
-margin-top:10px;
-background:rgba(255,255,255,0.1);
-padding:10px;
-border-radius:10px;
+margin-top:8px;
 }
 </style>
 </head>
@@ -100,11 +90,11 @@ border-radius:10px;
 </div>
 
 <div class="nav">
-<a href="index.html">Home</a>
-<a href="flowchart.html">Course Flowchart</a>
-<a href="gpolicy.html">Grading Policy</a>
-<a href="help.html">User Guideline</a>
-<a href="https://www.northsouth.edu/academic/sbe/mba-emba/" target="_blank">Official</a>
+<a href="#">Home</a>
+<a href="#">Course Flowchart</a>
+<a href="#">Grading Policy</a>
+<a href="#">User Guideline</a>
+<a href="#">Official</a>
 </div>
 
 <div class="grid">
@@ -136,27 +126,32 @@ border-radius:10px;
 <div>Credits: <span id="credits">0</span></div>
 </div>
 
+<div class="result">
+<div>Credit Counted: <span id="counted">0</span></div>
+<div>Credit Passed: <span id="passed">0</span></div>
+</div>
+
 </div>
 
 <!-- RIGHT -->
 <div class="panel">
 
-<!-- EXISTING PROGRESS -->
-<div class="progress-container">
-<div class="progress-bar"><div id="bar" class="progress-fill"></div></div>
-<div id="levels"></div>
+<div id="advisor" class="box"></div>
+<div id="simulator" class="box"></div>
+<div id="retake" class="box"></div>
+
+<div class="box">
+<div style="display:flex;justify-content:space-between;align-items:center;">
+<b>🧠 AI Level Progress</b>
+<span id="progressPercent" style="font-size:12px;font-weight:600;color:#00e676;">0%</span>
+</div>
+<div class="progress-bar"><div id="courseBar" class="progress-fill"></div></div>
+<div id="courseLevels"></div>
+<div id="degreeMsg"></div>
 </div>
 
-<!-- NEW AI LEVEL PROGRESS -->
-<div class="progress-container">
-<div style="font-size:13px;margin-bottom:5px;">🧠 AI Level Progress</div>
-<div class="progress-bar"><div id="aiBar" class="progress-fill"></div></div>
-<div id="aiLevels"></div>
-<div id="degreeMsg" style="margin-top:6px;font-size:12px;"></div>
-</div>
+<canvas id="cgpaChart" width="320" height="150"></canvas>
 
-<div id="advisor" class="advisor"></div>
-<div id="simulator" class="simulator"></div>
 <div id="status"></div>
 
 </div>
@@ -172,6 +167,8 @@ let gradeMap={
 "C+":2.3,"C":2,"C-":1.7,"D+":1.3,"D":1,"F":0,"Waived":0
 };
 
+let cgpaHistory=[];
+
 function handleProgram(){
 let p=document.getElementById("program").value;
 document.getElementById("batch").style.display=(p==="MBA")?"block":"none";
@@ -184,24 +181,28 @@ function getCourses(){
 let p=document.getElementById("program").value;
 let b=document.getElementById("batch").value;
 
-let majors=["MAJOR1","MAJOR2","MAJOR3","MAJOR4","MAJOR5","MAJOR6","MAJOR7","MAJOR8"];
+let majors=["MAJOR1","MAJOR2","MAJOR3","MAJOR4"];
 
 if(p==="MBA"){
+if(!b) return [];
 if(b==="new") return ["BUS 500","BUS 501","BUS 505","BUS 511","BUS 516","BUS 518","BUS 520","BUS 525","BUS 530","BUS 535","BUS 601","BUS 620","BUS 635","BUS 650","BUS 685","BUS 690","BUS 698","BUS 699","Open Elective",...majors];
 if(b==="old") return ["BUS 500","BUS 501","BUS 505","BUS 511","BUS 516","BUS 518","BUS 520","BUS 525","BUS 530","BUS 601","BUS 620","BUS 635","BUS 650","BUS 685","BUS 690","BUS 698","Open Elective 1","Open Elective 2",...majors];
 }
+
 if(p==="EMBA"){
 return ["EMB 500","EMB 501","EMB 502","EMB 510","EMB 520","EMB 601","EMB 602","EMB 620","EMB 650","EMB 660","EMB 670","EMB 690","BUS 700",...majors];
 }
+
 return [];
 }
 
 function addRow(){
+
 let p=document.getElementById("program").value;
 let b=document.getElementById("batch").value;
 
 if(!p) return alert("Select Program first");
-if(p==="MBA"&&!b) return alert("Select Batch first");
+if(p==="MBA" && !b) return alert("Select Batch first");
 
 let div=document.createElement("div");
 div.className="row";
@@ -228,9 +229,12 @@ div.querySelectorAll("select").forEach(s=>s.onchange=calculate);
 
 function calculate(){
 
+let p=document.getElementById("program").value;
+let b=document.getElementById("batch").value;
+if(p==="MBA" && !b) return;
+
 let rows=document.querySelectorAll(".row");
-let passed={},failed={},waived={};
-let totalPoints=0,totalCredits=0;
+let courseAttempts={};
 
 rows.forEach(r=>{
 let c=r.querySelector(".course").value;
@@ -238,22 +242,45 @@ let g=r.querySelector(".grade").value;
 if(!c||!g)return;
 
 let credit=3;
-let program=document.getElementById("program").value;
-let batch=document.getElementById("batch").value;
 
 if(c==="BUS 500") credit=0;
-if(program==="EMBA" && c==="BUS 700") credit=2;
-if(program==="MBA"){
-if(batch==="old" && c==="BUS 698") credit=1;
-if(batch==="new" && c==="BUS 698") credit=0;
+if(p==="EMBA" && c==="BUS 700") credit=2;
+if(p==="MBA"){
+if(b==="old" && c==="BUS 698") credit=1;
+if(b==="new" && c==="BUS 698") credit=0;
 }
 
-if(g==="Waived") waived[c]=true;
-else if(g==="F") failed[c]=true;
+if(g==="Waived") credit=0;
+
+if(!courseAttempts[c]) courseAttempts[c]=[];
+courseAttempts[c].push({grade:g,credit:credit});
+});
+
+let totalPoints=0,totalCredits=0,creditPassed=0;
+let passed={},waived={},failedCourses=[];
+
+Object.keys(courseAttempts).forEach(course=>{
+let attempts=courseAttempts[course];
+
+/* FIX: track waived courses */
+let hasWaived=attempts.some(a=>a.grade==="Waived");
+if(hasWaived) waived[course]=true;
+
+let best=attempts.reduce((b,a)=>{
+if(a.grade==="Waived") return b;
+if(!b) return a;
+return gradeMap[a.grade]>gradeMap[b.grade]?a:b;
+},null);
+
+/* Only count the best attempt's credit — not all retakes */
+if(best){
+totalCredits+=best.credit;
+if(best.grade==="F") failedCourses.push({course,credit:best.credit});
 else{
-passed[c]=true;
-totalCredits+=credit;
-totalPoints+=credit*gradeMap[g];
+passed[course]=true;
+creditPassed+=best.credit;
+}
+totalPoints+=best.credit*gradeMap[best.grade];
 }
 });
 
@@ -261,15 +288,8 @@ let cgpa=totalCredits?(totalPoints/totalCredits).toFixed(2):"0.00";
 
 document.getElementById("cgpa").innerText=cgpa;
 document.getElementById("credits").innerText=totalCredits;
-
-/* SIMULATOR */
-let simA=((totalPoints+12)/(totalCredits+3)).toFixed(2);
-let simB=((totalPoints+9)/(totalCredits+3)).toFixed(2);
-
-document.getElementById("simulator").innerText=
-`📊 Next Course Prediction:
-If A → CGPA: ${simA}
-If B → CGPA: ${simB}`;
+document.getElementById("counted").innerText=totalCredits;
+document.getElementById("passed").innerText=creditPassed;
 
 /* AI ADVISOR */
 let aiAdvice="";
@@ -278,78 +298,161 @@ else if(cgpa>=3.3) aiAdvice="💡 Doing well.";
 else if(cgpa>=3.0) aiAdvice="⚠️ Improve performance.";
 else if(cgpa>=2.75) aiAdvice="📘 Maintain carefully.";
 else aiAdvice="🚨 Critical zone.";
-
 document.getElementById("advisor").innerText=aiAdvice;
 
-/* NEW AI LEVEL PROGRESS */
-let aiPercent=0, html="", ready=false;
-let program=document.getElementById("program").value;
+/* SIMULATOR */
+let simA=((totalPoints+12)/(totalCredits+3)).toFixed(2);
+let simB=((totalPoints+9)/(totalCredits+3)).toFixed(2);
+document.getElementById("simulator").innerText=
+`📊 Next Course Prediction:\nIf A → CGPA: ${simA}\nIf B → CGPA: ${simB}`;
 
-if(program==="MBA"){
+/* RETAKE */
+let txt="🔁 Retake Impact:\n";
+failedCourses.forEach(f=>{
+let newCg=((totalPoints+f.credit*4)/totalCredits).toFixed(2);
+txt+=`${f.course} → ${newCg}\n`;
+});
+document.getElementById("retake").innerText=txt;
+
+/* AI PROGRESS — FIX: use Number() to ensure numeric addition */
+let percent=0,html="",ready=false;
+
+if(p==="MBA"){
 let f=["BUS 500","BUS 501","BUS 505","BUS 511","BUS 516","BUS 518","BUS 520","BUS 525","BUS 530","BUS 535"];
-let a=["BUS 601","BUS 620","BUS 635","BUS 650","BUS 685","BUS 690"];
+let a=["BUS 601","BUS 620","BUS 635","BUS 650","BUS 685"];
+let i=["BUS 690"];
 let m=["MAJOR1","MAJOR2","MAJOR3","MAJOR4"];
 
-let fC=f.filter(c=>passed[c]||waived[c]).length;
-let aC=a.filter(c=>passed[c]).length;
-let mC=m.filter(c=>passed[c]).length;
+let fD=f.every(c=>passed[c]||waived[c]);
+let aD=a.every(c=>passed[c]||waived[c]);
+let iD=i.every(c=>passed[c]||waived[c]);
+let mD=m.every(c=>passed[c]||waived[c]);
+let eD=passed["BUS 698"]||passed["BUS 699"]||passed["Open Elective"]||
+        passed["Open Elective 1"]||passed["Open Elective 2"]||
+        waived["BUS 698"]||waived["Open Elective"]||
+        waived["Open Elective 1"]||waived["Open Elective 2"]
+        ?true:false;
 
-let fD=fC===f.length, aD=aC===a.length, mD=mC===4;
-let eD=passed["Open Elective"]||passed["BUS 698"]||passed["BUS 699"];
-
-if(fD)aiPercent+=25;
-if(aD)aiPercent+=25;
-if(mD)aiPercent+=25;
-if(eD)aiPercent+=25;
+/* FIX: explicit numeric addition instead of boolean coercion */
+percent=(Number(fD)+Number(aD)+Number(iD)+Number(mD)+Number(eD))*20;
 
 html=`
-<div class="${fD?'done':'notdone'}">Foundation ${fC}/${f.length}</div>
-<div class="${aD?'done':'notdone'}">Advanced ${aC}/${a.length}</div>
-<div class="${mD?'done':'notdone'}">Major ${mC}/4</div>
+<div class="${fD?'done':'notdone'}">Foundation (${f.filter(c=>passed[c]||waived[c]).length}/${f.length})</div>
+<div class="${aD?'done':'notdone'}">Advanced (${a.filter(c=>passed[c]||waived[c]).length}/${a.length})</div>
+<div class="${iD?'done':'notdone'}">Integrative (${i.filter(c=>passed[c]||waived[c]).length}/${i.length})</div>
+<div class="${mD?'done':'notdone'}">Major (${m.filter(c=>passed[c]||waived[c]).length}/${m.length})</div>
 <div class="${eD?'done':'notdone'}">Elective</div>
 `;
 
-ready=fD&&aD&&mD&&eD&&cgpa>=2.75;
+ready=fD&&aD&&iD&&mD&&eD&&cgpa>=2.75;
 }
 
-if(program==="EMBA"){
+if(p==="EMBA"){
 let f=["EMB 500","EMB 501","EMB 502","EMB 510","EMB 520"];
 let func=["EMB 601","EMB 602","EMB 620","EMB 650","EMB 660","EMB 670","EMB 690","BUS 700"];
 let m=["MAJOR1","MAJOR2","MAJOR3","MAJOR4"];
 
-let fC=f.filter(c=>passed[c]).length;
-let funcC=func.filter(c=>passed[c]).length;
-let mC=m.filter(c=>passed[c]).length;
+let fD=f.every(c=>passed[c]||waived[c]);
+let funcD=func.every(c=>passed[c]||waived[c]);
+let mD=m.every(c=>passed[c]||waived[c]);
 
-let fD=fC===5, funcD=funcC===8, mD=mC===4;
-
-if(fD)aiPercent+=33;
-if(funcD)aiPercent+=33;
-if(mD)aiPercent+=34;
+/* FIX: explicit numeric values for percent calculation */
+percent=(Number(fD)*33)+(Number(funcD)*33)+(Number(mD)*34);
 
 html=`
-<div class="${fD?'done':'notdone'}">Foundation ${fC}/5</div>
-<div class="${funcD?'done':'notdone'}">Functional ${funcC}/8</div>
-<div class="${mD?'done':'notdone'}">Major ${mC}/4</div>
+<div class="${fD?'done':'notdone'}">Foundation (${f.filter(c=>passed[c]||waived[c]).length}/${f.length})</div>
+<div class="${funcD?'done':'notdone'}">Functional (${func.filter(c=>passed[c]||waived[c]).length}/${func.length})</div>
+<div class="${mD?'done':'notdone'}">Major (${m.filter(c=>passed[c]||waived[c]).length}/${m.length})</div>
 `;
 
 ready=fD&&funcD&&mD&&cgpa>=2.75;
 }
 
-document.getElementById("aiBar").style.width=aiPercent+"%";
-document.getElementById("aiLevels").innerHTML=html;
+/* FIX: apply width as a valid percentage string */
+let pct=Math.min(Math.round(percent),100);
+document.getElementById("courseBar").style.width=pct+"%";
+document.getElementById("progressPercent").innerText=pct+"%";
+document.getElementById("courseLevels").innerHTML=html;
 document.getElementById("degreeMsg").innerText=
 ready?"🎓 NOW YOU CAN APPLY DEGREE ANALYSIS":"";
 
-document.getElementById("status").innerText =
-(cgpa>=2.75) ? "✅ On Track" : "❌ Risk Zone";
+/* GRAPH */
+cgpaHistory.push(parseFloat(cgpa));
+drawGraph();
 
+/* STATUS */
+document.getElementById("status").innerText=
+(cgpa>=2.75)?"✅ On Track":"❌ Risk Zone";
+
+}
+
+function drawGraph(){
+let c=document.getElementById("cgpaChart");
+let ctx=c.getContext("2d");
+ctx.clearRect(0,0,c.width,c.height);
+
+if(cgpaHistory.length<2){
+ctx.fillStyle="#aaa";
+ctx.font="12px sans-serif";
+ctx.textAlign="center";
+ctx.fillText("Add more entries to see CGPA trend",c.width/2,c.height/2);
+return;
+}
+
+let len=cgpaHistory.length;
+let padL=30,padR=10,padT=10,padB=20;
+let w=c.width-padL-padR;
+let h=c.height-padT-padB;
+
+/* grid lines */
+ctx.strokeStyle="#ddd";
+ctx.lineWidth=0.5;
+[1,2,3,4].forEach(v=>{
+let y=padT+h-(v/4)*h;
+ctx.beginPath();ctx.moveTo(padL,y);ctx.lineTo(padL+w,y);ctx.stroke();
+ctx.fillStyle="#888";ctx.font="9px sans-serif";ctx.textAlign="right";
+ctx.fillText(v.toFixed(0),padL-3,y+3);
+});
+
+/* line */
+ctx.beginPath();
+ctx.strokeStyle="#00e676";
+ctx.lineWidth=2;
+cgpaHistory.forEach((v,i)=>{
+let x=padL+i*(w/(len-1));
+let y=padT+h-((v/4)*h);
+if(i===0) ctx.moveTo(x,y);
+else ctx.lineTo(x,y);
+});
+ctx.stroke();
+
+/* dots */
+ctx.fillStyle="#00e676";
+cgpaHistory.forEach((v,i)=>{
+let x=padL+i*(w/(len-1));
+let y=padT+h-((v/4)*h);
+ctx.beginPath();ctx.arc(x,y,3,0,Math.PI*2);ctx.fill();
+});
 }
 
 function clearAll(){
 document.getElementById("rows").innerHTML="";
+cgpaHistory=[];
+document.getElementById("courseBar").style.width="0%";
+document.getElementById("progressPercent").innerText="";
+document.getElementById("courseLevels").innerHTML="";
+document.getElementById("degreeMsg").innerText="";
+document.getElementById("advisor").innerText="";
 document.getElementById("simulator").innerText="";
-calculate();
+document.getElementById("retake").innerText="";
+document.getElementById("status").innerText="";
+document.getElementById("cgpa").innerText="0.00";
+document.getElementById("credits").innerText="0";
+document.getElementById("counted").innerText="0";
+document.getElementById("passed").innerText="0";
+let c=document.getElementById("cgpaChart");
+let ctx=c.getContext("2d");
+ctx.clearRect(0,0,c.width,c.height);
 }
 
 </script>
